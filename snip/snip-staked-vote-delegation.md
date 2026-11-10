@@ -96,6 +96,8 @@ For a pool member `M` with stake in a pool operated by staker `V`, `resolve_pool
 
 For validator `V`'s own stake, `resolve_validator(V)` returns `V`'s vote receiver (`V` if none is set). Declining default delegations does not affect a validator's own stake.
 
+An explicit delegatee is used exactly as given. If a pool member explicitly delegates to a validator's staker address, the voting power goes to that address. The validator's vote receiver and decline setting are not applied. Delegators do not need to delegate to their own validator, because the validator already receives their voting power by default. Interfaces SHOULD warn a delegator who tries to delegate to a staker address, and point them to the default instead.
+
 ### Voting power calculation
 
 For a proposal with snapshot block `B`, voting power from staked STRK MUST be computed as follows, with all contract state read at block `B`:

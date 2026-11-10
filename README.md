@@ -12,6 +12,7 @@ A draft proposal, with its contract, to let staked STRK take part in Starknet go
 | [`src/interface.cairo`](src/interface.cairo) | `IStakedVoteDelegation` interface |
 | [`src/registry.cairo`](src/registry.cairo) | Reference registry contract (immutable, no owner, holds no funds) |
 | [`tests/test_registry.cairo`](tests/test_registry.cairo) | snforge unit and fuzz tests |
+| [`audits/`](audits/) | Automated security reviews (AI, not a professional audit) |
 
 ## How it works
 
@@ -19,7 +20,7 @@ A draft proposal, with its contract, to let staked STRK take part in Starknet go
 |---|---|---|
 | Delegator | nothing | Vote goes to the pool's validator (or to its vote receiver) |
 | Delegator | `delegate(self)` | Keeps their own vote |
-| Delegator | `delegate(x)` | Vote goes to `x`, in every pool |
+| Delegator | `delegate(x)` | Vote goes to `x` as given, in every pool (no need to delegate to your own validator: that is the default) |
 | Delegator | `reset_delegation()` | Back to the default |
 | Validator | `set_vote_receiver(x)` | `x` votes with the validator's own stake and default delegations |
 | Validator | `set_accepts_default_delegations(false)` | Delegators who made no choice keep their own vote |
