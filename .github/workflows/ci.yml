@@ -1,0 +1,19 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.18.0"
+      - uses: foundry-rs/setup-snfoundry@v4
+        with:
+          starknet-foundry-version: "0.60.0"
+      - run: scarb fmt --check
+      - run: scarb build
+      - run: snforge test

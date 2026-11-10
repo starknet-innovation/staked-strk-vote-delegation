@@ -1,0 +1,25 @@
+[package]
+name = "staked_vote_delegation"
+version = "0.1.0"
+edition = "2024_07"
+description = "Registry for delegating the governance voting power of staked STRK (SNIP draft, Option B: opt-out)"
+license = "MIT"
+
+[dependencies]
+starknet = "2.18.0"
+
+[dev-dependencies]
+snforge_std = "0.60.0"
+assert_macros = "2.18.0"
+
+[[target.starknet-contract]]
+sierra = true
+
+[scripts]
+test = "snforge test"
+
+[tool.scarb]
+allow-prebuilt-plugins = ["snforge_std"]
+
+[tool.snforge]
+fuzzer_runs = 256
