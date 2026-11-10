@@ -24,7 +24,7 @@ This SNIP:
 3. Gives delegators an **opt-out**. A delegator who registers an explicit delegatee in the registry (themselves or anyone else) always gets that choice, whatever the validator does.
 4. Gives validators two controls: name a separate voting address, or decline default delegations entirely.
 
-Other voting power sources (vSTRK, L1 STRK, the SNF delegate whitelist) are unchanged.
+Other voting power sources (vSTRK, L1 STRK, the current delegate whitelist) are unchanged.
 
 ## Motivation
 
@@ -115,8 +115,7 @@ The generator script and its output for each proposal SHOULD be published so any
 ### Activation
 
 1. The registry is deployed, and its address published, before the vote on this SNIP.
-2. If the SNIP is approved, the opt-out default applies only to proposals whose snapshot block is at least **30 days** (to be confirmed) after the vote result. During this notice period, delegators can register their choice and validators can decline or name a vote receiver.
-3. Until activation, explicit delegations recorded in the registry MAY already be honoured, because they only express the delegator's own choice.
+2. If the SNIP is approved, the opt-out default applies only to proposals whose snapshot block is at least **7 days** after the vote result. During this notice period, delegators can register their choice and validators can decline or name a vote receiver.
 
 ### Proposed ballot
 
