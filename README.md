@@ -1,6 +1,7 @@
 # Staked STRK Vote Delegation
 
-Only about 0.5% of staked STRK takes part in Starknet governance votes. This draft SNIP proposes that the validator you stake with votes with your staked STRK by default, and that you can opt out at any time with one call to a small registry contract that holds no funds and has no owner. Validators can name a separate voting address or decline delegated votes, and the staking protocol itself does not change.
+Only about 0.5% of staked STRK takes part in Starknet governance votes. This draft SNIP proposes that the validator you stake with votes with your staked STRK by default, and that you can opt out at any time with one call to a small registry contract.
+Validators can name a separate voting address or decline delegated votes, and the staking protocol itself does not change.
 
 > **Status: draft, open for feedback.** Not deployed. The contract has had an automated security review only, not a professional audit.
 
