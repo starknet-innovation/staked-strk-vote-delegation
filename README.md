@@ -3,7 +3,7 @@
 Only about 0.5% of staked STRK takes part in Starknet governance votes. This draft SNIP proposes that the validator you stake with votes with your staked STRK by default, and that you can opt out at any time with one call to a small registry contract.
 Validators can name a separate voting address or decline delegated votes, and the staking protocol itself does not change.
 
-> **Status: draft, open for feedback.** Not deployed. The contract has had an automated security review only, not a professional audit.
+> **Status: draft for review.** AI audited, not deployed.
 
 Feedback is especially welcome on the opt-out default, the risk of voting power concentrating in large validators, and how liquid staking protocols and custodians should be handled.
 
