@@ -65,7 +65,7 @@ Delegators already trust their validator with their stake: the validator runs th
 ## Rationale
 
 - **A registry instead of a change to the staking protocol.** The staking and pool contracts are not touched. Governance voting power is already calculated off-chain from staking state (the Snapshot X "Stakers" whitelist and the `strk-staked-balance` Snapshot strategy). Adding one more input to that calculation is the smallest change with the least risk.
-- **One delegate per delegator, across all pools.** This is simple to understand and costs one transaction. A delegator who wants to delegate to multiple delegates per pool can use separate addresses.
+- **One delegate per delegator, across all pools.** This is simple to understand and costs one transaction. A delegator who wants to delegate to different delegates for different pools can use separate addresses.
 - **No transitive delegation.** A delegate's own choices do not redirect votes delegated to it. This keeps the result predictable and avoids loops.
 - **Validators can decline.** A validator that does not want to vote, or cannot for legal or operational reasons, can return default voting power to its delegators. Pool members then keep their own vote, exactly as today.
 - **Separate voting address.** A staker address is often a cold wallet. Validators can name a different address to vote with, without moving stake.
