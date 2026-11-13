@@ -1,15 +1,13 @@
 ---
 snip: TBD
 title: Staked STRK Vote Delegation to Validators (Opt-Out)
-description: Staked STRK votes through the pool's validator by default; any delegator can take its vote back or delegate it elsewhere.
+description: Validators vote on behalf of their delegators by default; any delegator can take back their vote or give it to any other address.
 author: TBD
 discussions-to: TBD
 status: Draft
 type: Meta
 created: 2026-11-10
 ---
-
-<!-- DRAFT for internal review. Figures, wording and parameters need review before publication. -->
 
 ## Simple Summary
 
@@ -20,9 +18,11 @@ Today, staked STRK only counts in Starknet governance if the delegator votes in 
 This SNIP:
 
 1. Deploys an immutable **Staked Vote Delegation Registry** on Starknet. The registry stores voting preferences only. It holds no funds and has no owner.
-2. Changes how the voting power of staked STRK is calculated for Starknet governance votes (Snapshot X) and polls (Snapshot, `starknet.eth`). Votes are binding: their outcome decides whether a proposal, such as a protocol upgrade, goes ahead. Polls are non-binding: they gather the community's view without committing to an outcome. The voting power of stake held in a delegation pool goes, by default, to that pool's validator.
+2. Changes how the voting power of staked STRK is calculated for Starknet governance votes (Snapshot X) and polls (Snapshot, `starknet.eth`). The voting power of stake held in a delegation pool goes, by default, to that pool's validator.
 3. Gives delegators an **opt-out**. A delegator who registers an explicit delegate in the registry (themselves or anyone else) has their registered choice applied, whatever the validator does.
 4. Gives validators two controls: name a separate voting address, or decline default delegations entirely.
+
+Votes are binding: their outcome decides whether a proposal, such as a protocol upgrade, goes ahead. Polls are non-binding: they gather the community's view without committing to an outcome.
 
 Other voting power sources (vSTRK, L1 STRK, the current delegate whitelist) are unchanged.
 
@@ -37,8 +37,7 @@ Staked STRK is the largest pool of committed, long-term STRK, yet it is almost a
 | Share of staked STRK that voted, average across the last six proposals | 0.5% |
 | Share of staked STRK held by delegators (not validators' self-stake) | 91% |
 | Delegator addresses that voted on the latest vote (v0.14.3 Updated) | 472 of 61,164 |
-| Turnout of staked STRK on the latest vote, today | 0.33% |
-| Same vote, if the validators who voted had carried their delegators' stake | 2.89% |
+| Latest vote (v0.14.3 Updated): today → with validator delegation | 0.33% → 2.89% |
 | Post-quantum L1 poll (Oct 2026): today → with validator delegation | 1.76% → 11.30% |
 
 These figures cover the six most recent proposals, three votes on Snapshot X and three polls on Snapshot (`starknet.eth`):
@@ -60,17 +59,16 @@ Low turnout causes three problems:
 - **Easy to capture.** Low participation can allow a small organised group to exert disproportionate influence.
 - **Lost signal.** Polls show who happened to vote, not what stakers think.
 
-Delegators already trust their validator with their stake: the validator runs the infrastructure, and its performance and conduct decide their rewards. Letting the validator also carry their vote, unless they say otherwise, extends that trust. An opt-in scheme (where a delegator must act to give their vote away) would leave turnout close to today's level, because the delegators who would act are mostly those who already vote. This SNIP therefore uses an opt-out default subject to an accessible way for users to register a different preference. Since it changes how existing voting power is assigned, it needs a governance vote.
+Delegators already trust their validator with their stake: the validator runs the infrastructure, and its performance and conduct decide their rewards. Letting the validator also carry their vote, unless they say otherwise, extends that trust. An opt-in scheme (where a delegator must act to give their vote away) would leave turnout close to today's level, because the delegators who would act are mostly those who already vote. This SNIP therefore uses an opt-out default subject to an accessible way for delegators to register a different preference. Since it changes how existing voting power is assigned, it needs a governance vote.
 
 ## Rationale
 
 - **A registry instead of a change to the staking protocol.** The staking and pool contracts are not touched. Governance voting power is already calculated off-chain from staking state (the Snapshot X "Stakers" whitelist and the `strk-staked-balance` Snapshot strategy). Adding one more input to that calculation is the smallest change with the least risk.
 - **One delegate per delegator, across all pools.** This is simple to understand and costs one transaction. A delegator who wants to delegate to different delegates for different pools can use separate addresses.
 - **No transitive delegation.** A delegate's own choices do not redirect votes delegated to it. This keeps the result predictable and avoids loops.
-- **Validators can decline.** A validator that does not want to vote, or cannot for legal or operational reasons, can return default voting power to its delegators. Pool members then keep their own vote, exactly as today.
+- **Validators can decline.** A validator that does not want to vote, or cannot for legal or operational reasons, can return default voting power to its delegators. Delegators then keep their own vote, exactly as today.
 - **Separate voting address.** A staker address is often a cold wallet. Validators can name a different address to vote with, without moving stake.
 - **Immutable contract.** No owner, upgrade or pause: nobody can change anyone else's choices. If the rules need to change, a new registry is deployed under a new SNIP.
-- **Snapshot-time semantics.** Like all other voting power, preferences are read at the proposal's snapshot block. A delegator who wants to vote directly on a proposal must register before its snapshot block.
 
 ## Specification
 
@@ -105,7 +103,7 @@ The reference implementation is in [`src/registry.cairo`](../src/registry.cairo)
 
 For a pool member `M` with stake in a pool operated by staker `V`, `resolve_pool_member(M, V)` returns:
 
-1. `M`'s explicit delegate, if one is set (this MAY be `M` itself);
+1. `M`'s explicit delegate (`delegatee` in the interface), if one is set (this MAY be `M` itself);
 2. otherwise `M`, if `V` has declined default delegations;
 3. otherwise `V`'s vote receiver (`V` itself if none is set).
 
@@ -117,7 +115,7 @@ Who can register a choice:
 - **Any address can be a delegate.** It does not have to be a validator: a delegator can choose themselves, another person, or any other address.
 - **Only pool stake is covered.** STRK that is not staked in a pool keeps its existing voting power sources (vSTRK, L1 STRK) and is not affected by this registry. A validator's own self-stake follows `resolve_validator` and is not affected by `delegate`.
 
-An explicit delegate is used exactly as given. If a pool member explicitly delegates to a validator's staker address, the voting power goes to that address. The validator's vote receiver and decline setting are not applied. Delegators do not need to delegate to their own validator, because the validator already receives their voting power by default. Interfaces SHOULD warn a delegator who tries to delegate to a staker address, and point them to the default instead.
+An explicit delegate is used exactly as given, so delegating to a validator's staker address skips its vote receiver and decline setting. Delegators do not need to do this: their validator already gets their vote by default, and interfaces SHOULD say so.
 
 ### Voting power calculation
 
@@ -133,8 +131,6 @@ The resulting list MUST be used:
 - **Snapshot X (governance votes):** as the Merkle whitelist that replaces the current "Stakers" whitelist strategy.
 - **Snapshot `starknet.eth` (polls):** in place of the `strk-staked-balance` strategy, for example as a whitelist or API strategy built from the same list, so that both platforms use identical numbers.
 
-The Starknet Foundation MUST publish the generator script and its output for each proposal, so anyone can reproduce the list.
-
 ### Activation
 
 1. The registry is deployed, and its address published, before the vote on this SNIP.
@@ -143,7 +139,7 @@ The Starknet Foundation MUST publish the generator script and its output for eac
 
 ### Proposed ballot
 
-> Approve SNIP-TBD: staked STRK votes through the pool's validator by default, with an opt-out for every delegator through the Staked Vote Delegation Registry. — **For / Against / Abstain**
+> Approve SNIP-TBD: validators vote on behalf of their delegators by default, and any delegator can take back their vote or give it to any other address through the Staked Vote Delegation Registry. — **For / Against / Abstain**
 
 ## Implementation
 
@@ -154,10 +150,10 @@ The Starknet Foundation MUST publish the generator script and its output for eac
 
 - **No funds, no admin.** The registry holds no tokens and has no privileged role. Each write changes only the caller's own entry, keyed on `get_caller_address()`.
 - **Spam entries.** Anyone can write an entry for their own address. Entries from addresses that hold no stake, or are not stakers, carry no weight in the calculation.
-- **Concentration.** The default moves the voting power of staked STRK to the validator of the pool it is staked in. It only applies where there is a validator. STRK that is not staked is not affected: it counts only if its holder locks it as vSTRK or delegates it, exactly as today. This proposal does not affect holders who are not staking. Among validators, large ones, including exchanges and liquid-staking operators, could gain significant weight.
+- **Concentration.** The default moves voting power to validators, so large ones, including exchanges and liquid-staking operators, could gain significant weight. Holders who are not staking are not affected.
 - **Contract delegators.** Liquid staking protocols, exchanges and custodians appear as pool members. Unless they call `delegate`, their stake follows the default. Those delegators should state their voting intentions publicly. Custodians, exchanges and other intermediaries are responsible for confirming their authority under their customer arrangements before exercising or delegating voting power attributable to customer assets.
 - **Validator key compromise.** Control of the staker address already means control of the validator's stake. The registry adds no new key.
-- **Timing.** Changes after a proposal's snapshot block have no effect on that proposal. Front-running a snapshot needs staking or delegation changes before it, which are public and subject to the staking contract's exit delays (to be verified).
+- **Timing.** Changes after a proposal's snapshot block have no effect on that proposal. To gain voting power for a proposal, stake must be added before its snapshot block. Those changes are public, and withdrawing the stake afterwards takes at least the staking contract's exit wait window (7 days on mainnet at the time of writing), so borrowing stake to vote ties it up for that long.
 - **Unused votes.** If a validator does not vote, the voting power delegated to it by default is not used. This is the same result as a delegator who does not vote today.
 
 ## History
