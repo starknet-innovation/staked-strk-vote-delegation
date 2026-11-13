@@ -13,7 +13,7 @@ created: 2026-11-10
 
 ## Simple Summary
 
-Today, staked STRK only counts in Starknet governance if the delegator votes in person, and almost no one does. This SNIP lets the validator a delegator stakes with vote on that delegator's behalf by default. A delegator who disagrees can take back their vote or give it to another validator or any other address, at any time, through one call to a registry contract. Changes only count if made before the proposal's snapshot block.
+Today, staked STRK only counts in Starknet governance if the delegator votes in person, and almost no one does. This SNIP gives validators the ability to vote on behalf of their delegators by default. A delegator who disagrees can take back their vote or give it to another validator or any other address, at any time, through one call to a registry contract. Changes only count if made before the proposal's snapshot block.
 
 ## Abstract
 
