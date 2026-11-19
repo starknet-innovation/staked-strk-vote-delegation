@@ -8,7 +8,7 @@ use staked_vote_delegation::interface::{
     IStakedVoteDelegationSafeDispatcher, IStakedVoteDelegationSafeDispatcherTrait, ValidatorConfig,
 };
 use staked_vote_delegation::registry::StakedVoteDelegation;
-use starknet::ContractAddress;
+use starknet::{ContractAddress, SyscallResultTrait};
 
 fn addr(v: felt252) -> ContractAddress {
     v.try_into().unwrap()
@@ -27,8 +27,8 @@ fn RECEIVER() -> ContractAddress {
 }
 
 fn deploy() -> (IStakedVoteDelegationDispatcher, IStakedVoteDelegationSafeDispatcher) {
-    let class = declare("StakedVoteDelegation").unwrap().contract_class();
-    let (address, _) = class.deploy(@array![]).unwrap();
+    let class = declare("StakedVoteDelegation").unwrap_syscall().contract_class();
+    let (address, _) = class.deploy(@array![]).unwrap_syscall();
     (
         IStakedVoteDelegationDispatcher { contract_address: address },
         IStakedVoteDelegationSafeDispatcher { contract_address: address },
