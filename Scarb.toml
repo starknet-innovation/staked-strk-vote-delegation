@@ -12,6 +12,9 @@ starknet = "2.18.0"
 snforge_std = "0.60.0"
 assert_macros = "2.18.0"
 
+[cairo]
+allow-warnings = false
+
 [[target.starknet-contract]]
 sierra = true
 

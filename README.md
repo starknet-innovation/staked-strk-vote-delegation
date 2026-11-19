@@ -14,7 +14,7 @@ Feedback is especially welcome on the opt-out default, the risk of voting power 
 | [`snip/snip-staked-vote-delegation.md`](snip/snip-staked-vote-delegation.md) | SNIP draft: motivation, rules, voting power calculation, activation, ballot |
 | [`src/interface.cairo`](src/interface.cairo) | `IStakedVoteDelegation` interface |
 | [`src/registry.cairo`](src/registry.cairo) | Reference registry contract (immutable, no owner, holds no funds) |
-| [`tests/test_registry.cairo`](tests/test_registry.cairo) | snforge unit and fuzz tests |
+| [`tests/acceptance/registry.cairo`](tests/acceptance/registry.cairo) | snforge acceptance and fuzz tests |
 | [`audits/`](audits/) | Automated security reviews (AI, not a professional audit) |
 
 ## How it works
@@ -32,12 +32,16 @@ Voting power is still calculated off-chain at each proposal's snapshot block, fr
 
 ## Build and test
 
-Requires Scarb 2.18 and Starknet Foundry 0.60.
+Requires the Scarb and Starknet Foundry versions pinned in [`.tool-versions`](.tool-versions).
 
 ```sh
+scarb fmt --check
+scarb lint --test --deny-warnings
 scarb build
 snforge test
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) to propose a change and [AGENTS.md](AGENTS.md) for the working agreement.
 
 ## Licence
 
