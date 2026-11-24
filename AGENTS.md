@@ -16,10 +16,7 @@ Tool versions are pinned in `.tool-versions`. Use exactly those versions; a miss
 tool is a failure, not a reason to skip a step.
 
 ```sh
-scarb fmt --check
-scarb lint --test --deny-warnings
-scarb build
-snforge test
+./scripts/check.sh   # scarb fmt --check, lint with warnings denied, build, snforge test
 ```
 
 All four must pass before a change is handed over. Compiler warnings are errors
