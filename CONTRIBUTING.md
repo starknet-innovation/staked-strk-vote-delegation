@@ -14,30 +14,30 @@ calculation. Say which section of `snip/snip-staked-vote-delegation.md` you are 
 2. Open an issue describing the behaviour you want and how it should be tested.
 3. Create a branch, add or change a test under `tests/acceptance/`, then change `src/`.
    Declare any new test file in `tests/lib.cairo`, or it will not run.
-4. Run the gates:
+4. Run the checks:
 
    ```sh
-   scarb fmt --check
-   scarb lint --test --deny-warnings
-   scarb build
-   snforge test
+   ./scripts/check.sh
    ```
 
-5. Open a pull request. CI runs the same four commands. A code owner reviews before merge.
+   It runs `scarb fmt --check`, `scarb lint --test --deny-warnings`, `scarb build` and
+   `snforge test`, and fails if no test ran.
+
+5. Open a pull request. CI runs the same script. A code owner reviews before merge.
 
 If your change touches the interface, events, errors or storage, update the SNIP draft in the
 same pull request.
 
-## Optional pre-commit hook
+## Pre-commit hook
 
-Maintainers use a pre-commit hook that checks the staged files with a shared tooling checkout.
-It is opt-in and needs that checkout, located through `ENGINEERING_PRACTICES_ROOT`:
+Turn it on once per clone. It runs `./scripts/check.sh --fast` (everything except the tests)
+before each commit:
 
 ```sh
 git config core.hooksPath .githooks
 ```
 
-Without the checkout, run the four commands above by hand. CI is the authority either way.
+CI is the authority either way.
 
 ## Security
 
